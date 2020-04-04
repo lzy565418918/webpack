@@ -4,7 +4,9 @@ const path = require("path");
 // 在打包好的目录下自动生成html文件，方便搭建简易服务器
 // var HtmlWebpackPlugin = require("html-webpack-plugin");
 // 导入清理 /dist 文件夹的插件
-var { CleanWebpackPlugin } = require("clean-webpack-plugin");
+var {
+  CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 // 导入热更新需要的
 const webpack = require("webpack");
 // 导入打包Vue文件的插件
@@ -21,7 +23,7 @@ module.exports = {
   entry: "./src/index.js",
   // 设置一个出口文件
   output: {
-    filename: "[chunkhash].js",
+    filename: "[name]_[chunkhash].js",
     path: path.resolve(__dirname, "./dist"),
   },
   //   module里面是loader，用来打包其他文件
@@ -30,30 +32,29 @@ module.exports = {
       // 打包css文件
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        // 想要把css打包成独立的文件，不能使用style-loader
+        use: [miniCssExtractPlugin.loader, "css-loader"],
       },
       //   打包less文件
       {
         test: /\.less$/,
-        use: ["style-loader", "css-loader", "less-loader"],
+        use: [miniCssExtractPlugin.loader, "css-loader", "less-loader"],
       },
       //   打包sass文件
       {
         test: /\.(sass|scss)$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [miniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
       // 打包图片
       {
         test: /\.(png|jpg|gif)$/,
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              filename: "[name][hash].[ext]",
-              limit: 10000,
-            },
+        use: [{
+          loader: "url-loader",
+          options: {
+            filename: "[name]_[hash].[ext]",
+            limit: 10000,
           },
-        ],
+        }, ],
       },
       // 打包字体文件
       {
@@ -115,9 +116,7 @@ module.exports = {
 
     // 使用css的打包插件
     new miniCssExtractPlugin({
-      option: {
-        filename: ["[contenthash].css"],
-      },
+      filename: "[name]_[contenthash].css",
     }),
   ],
 };
