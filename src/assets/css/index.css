@@ -1,0 +1,8 @@
+#v1{
+    background-color: #ff0000;
+}
+.box{
+    width: 220px;
+    height: 105px;
+    background: url('../images/bilibili.png');
+}
